@@ -2,6 +2,9 @@ package com.rajeev.playground.japancoronastats.controller;
 
 import com.rajeev.playground.japancoronastats.contants.ApplicationConstants;
 import java.util.Properties;
+
+import com.rajeev.playground.japancoronastats.dto.CoronaStatsResponseDTO;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,7 +39,8 @@ public class CoronaStatsControllerTest {
                 .accept(MediaType.APPLICATION_JSON)
                 .build();
 
-        ResponseEntity<String> responseEntity = testRestTemplate.exchange(requestEntity, String.class);
+        ResponseEntity<CoronaStatsResponseDTO> responseEntity = testRestTemplate.exchange(requestEntity, CoronaStatsResponseDTO.class);
         assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
+        Assertions.assertNotNull(responseEntity.getBody().getTested());
     }
 }
