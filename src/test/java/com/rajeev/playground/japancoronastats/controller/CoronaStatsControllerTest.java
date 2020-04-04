@@ -2,7 +2,7 @@ package com.rajeev.playground.japancoronastats.controller;
 
 import com.rajeev.playground.japancoronastats.contants.ApplicationConstants;
 import com.rajeev.playground.japancoronastats.dto.CoronaStatsResponseDTO;
-import com.rajeev.playground.japancoronastats.service.CoronaStatisticsService;
+import com.rajeev.playground.japancoronastats.service.CoronaStatsService;
 import java.util.Properties;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -31,7 +31,7 @@ public class CoronaStatsControllerTest {
     private TestRestTemplate testRestTemplate;
 
     @MockBean
-    private CoronaStatisticsService coronaStatisticsService;
+    private CoronaStatsService coronaStatisticsService;
 
     @Test
     public void testController() {
@@ -54,7 +54,7 @@ public class CoronaStatsControllerTest {
     }
 
     private void mockCoronaStatsService() {
-        Mockito.when(coronaStatisticsService.getCoronaStatsByPrefectureName("saitama")).thenReturn(
+        Mockito.when(coronaStatisticsService.getCoronaStats("saitama")).thenReturn(
                 CoronaStatsResponseDTO.builder()
                         .tested(100L)
                         .confirmed(20L)
