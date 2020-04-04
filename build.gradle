@@ -2,6 +2,7 @@ plugins {
 	id 'org.springframework.boot' version '2.2.6.RELEASE'
 	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
 	id 'java'
+	id 'org.flywaydb.flyway' version '6.3.2'
 }
 
 group = 'com.rajeev.playground'
@@ -10,6 +11,12 @@ sourceCompatibility = '1.8'
 
 repositories {
 	mavenCentral()
+}
+
+flyway {
+	url = 'jdbc:mysql://127.0.0.1:10901/playground'
+	user = 'root'
+	password = 'my-password'
 }
 
 dependencies {
