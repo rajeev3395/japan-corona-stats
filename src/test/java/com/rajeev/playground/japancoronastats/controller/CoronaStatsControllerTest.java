@@ -45,4 +45,20 @@ public class CoronaStatsControllerTest {
         Assertions.assertNotNull(responseEntity.getBody().getDeaths());
         Assertions.assertNotNull(responseEntity.getBody().getCritical());
     }
+
+    @Test
+    public void whenPrefectureDetailsDoesNotExist_thenGetDetails() {
+        PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{", "}");
+        Properties properties = new Properties();
+        properties.setProperty("prefecture", "aichi");
+        String path = propertyPlaceholderHelper.replacePlaceholders(ApplicationConstants.CORONA_STATS, properties);
+        RequestEntity<Void> requestEntity = RequestEntity
+                .get(UriComponentsBuilder.fromPath(path).build().toUri())
+                .accept(MediaType.APPLICATION_JSON)
+                .build();
+
+        ResponseEntity<CoronaStatsResponseDTO> responseEntity = testRestTemplate.exchange(requestEntity, CoronaStatsResponseDTO.class);
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.BAD_REQUEST));
+    }
+
 }
