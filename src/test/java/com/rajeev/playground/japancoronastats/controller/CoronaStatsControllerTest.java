@@ -1,6 +1,7 @@
 package com.rajeev.playground.japancoronastats.controller;
 
 import com.rajeev.playground.japancoronastats.contants.ApplicationConstants;
+import java.util.Properties;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Properties;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -38,6 +37,6 @@ public class CoronaStatsControllerTest {
                 .build();
 
         ResponseEntity<String> responseEntity = testRestTemplate.exchange(requestEntity, String.class);
-        assertThat(responseEntity.getStatusCode(), is(HttpStatus.NOT_FOUND));
+        assertThat(responseEntity.getStatusCode(), is(HttpStatus.OK));
     }
 }
