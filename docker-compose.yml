@@ -4,8 +4,6 @@ services:
     image: mysql:5.7.16
     ports:
       - "10901:3306"
-    volumes:
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     environment:
       - MYSQL_ROOT_PASSWORD= 'my-password'
       - MYSQL_DATABASE= 'playground'
