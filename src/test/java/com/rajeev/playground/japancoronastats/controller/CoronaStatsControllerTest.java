@@ -28,7 +28,7 @@ public class CoronaStatsControllerTest {
     private TestRestTemplate testRestTemplate;
 
     @Test
-    public void testController() {
+    public void whenCoronaStatsExist_thenGetStats() {
         PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{", "}");
         Properties properties = new Properties();
         properties.setProperty("prefecture", "saitama");
@@ -47,7 +47,7 @@ public class CoronaStatsControllerTest {
     }
 
     @Test
-    public void whenPrefectureDetailsDoesNotExist_thenGetDetails() {
+    public void whenCoronaStatsDoesNotExist_thenGetStats() {
         PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{", "}");
         Properties properties = new Properties();
         properties.setProperty("prefecture", "aichi");
