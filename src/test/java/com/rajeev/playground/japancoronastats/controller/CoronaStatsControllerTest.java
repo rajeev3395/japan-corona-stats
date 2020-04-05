@@ -1,12 +1,20 @@
 package com.rajeev.playground.japancoronastats.controller;
 
+import com.github.database.rider.core.DBUnitRule;
+import com.github.database.rider.core.api.configuration.DBUnit;
+import com.github.database.rider.core.api.dataset.DataSet;
+import com.github.database.rider.spring.api.DBRider;
 import com.rajeev.playground.japancoronastats.contants.ApplicationConstants;
 import com.rajeev.playground.japancoronastats.dto.CoronaStatsResponseDTO;
+import java.sql.Connection;
+import javax.sql.DataSource;
 import java.util.Properties;
+import org.junit.Rule;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpStatus;
@@ -22,12 +30,26 @@ import static org.hamcrest.core.Is.is;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@DBRider
+@DBUnit(caseSensitiveTableNames = true)
 public class CoronaStatsControllerTest {
 
     @Autowired
     private TestRestTemplate testRestTemplate;
 
+    @Autowired
+    @Qualifier("datasource")
+    private DataSource dataSource;
+    private Connection connection;
+
+    @Rule
+    public DBUnitRule dbUnitRule =  DBUnitRule.instance(() -> {
+        connection =  dataSource.getConnection();
+        return connection;
+    });
+
     @Test
+    @DataSet(value = "/corona-details/corona-details-init.yml", cleanBefore = true)
     public void whenCoronaStatsExist_thenGetStats() {
         PropertyPlaceholderHelper propertyPlaceholderHelper = new PropertyPlaceholderHelper("{", "}");
         Properties properties = new Properties();
