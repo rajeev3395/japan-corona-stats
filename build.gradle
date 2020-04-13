@@ -37,6 +37,9 @@ dependencies {
 	testImplementation 'org.junit.jupiter:junit-jupiter-api'
 	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 	testImplementation 'org.hamcrest:hamcrest-library'
+	testImplementation 'org.testcontainers:testcontainers:1.13.0'
+	testImplementation 'org.testcontainers:mysql:1.13.0'
+	testImplementation 'org.flywaydb:flyway-core:6.3.2'
 }
 
 test {

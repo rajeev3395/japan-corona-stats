@@ -6,10 +6,14 @@ import com.github.database.rider.core.api.dataset.DataSet;
 import com.github.database.rider.spring.api.DBRider;
 import com.rajeev.playground.japancoronastats.contants.ApplicationConstants;
 import com.rajeev.playground.japancoronastats.dto.CoronaStatsResponseDTO;
-import java.sql.Connection;
+import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.Properties;
-import org.junit.Rule;
+import org.flywaydb.core.Flyway;
+import org.junit.ClassRule;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,14 +21,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.context.support.TestPropertySourceUtils;
 import org.springframework.util.PropertyPlaceholderHelper;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.testcontainers.containers.MySQLContainer;
 
+import static com.rajeev.playground.japancoronastats.controller.CoronaStatsControllerTest.PropertiesInitializer;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -32,7 +42,25 @@ import static org.hamcrest.core.Is.is;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DBRider
 @DBUnit(caseSensitiveTableNames = true)
+@ContextConfiguration(initializers = PropertiesInitializer.class)
 public class CoronaStatsControllerTest {
+
+    @ClassRule
+    public static MySQLContainer mySQLContainer =  new MySQLContainer();
+
+    public static class PropertiesInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
+
+        @Override
+        public void initialize(ConfigurableApplicationContext applicationContext) {
+            mySQLContainer.start();
+            TestPropertySourceUtils.addInlinedPropertiesToEnvironment(
+                    applicationContext.getEnvironment(),
+                    "spring.datasource.url=" + mySQLContainer.getJdbcUrl(),
+                    "spring.datasource.userName=" + mySQLContainer.getUsername(),
+                    "spring.datasource.password=" + mySQLContainer.getPassword()
+            );
+        }
+    }
 
     @Autowired
     private TestRestTemplate testRestTemplate;
@@ -40,13 +68,29 @@ public class CoronaStatsControllerTest {
     @Autowired
     @Qualifier("datasource")
     private DataSource dataSource;
-    private Connection connection;
+    private static Connection connection;
 
-    @Rule
+    @ClassRule
     public DBUnitRule dbUnitRule =  DBUnitRule.instance(() -> {
         connection =  dataSource.getConnection();
         return connection;
     });
+
+    @AfterAll
+    public static void freeResources() throws SQLException {
+        connection.close();
+        mySQLContainer.stop();
+    }
+
+    @PostConstruct
+    public void runFlyway() {
+        Flyway flyway = Flyway.configure()
+                .dataSource(mySQLContainer.getJdbcUrl(), mySQLContainer.getUsername(), mySQLContainer.getPassword())
+                .load();
+        flyway.clean();
+        flyway.migrate();
+        flyway.validate();
+    }
 
     @Test
     @DataSet(value = "/corona-details/corona-details-init.yml", cleanBefore = true)
