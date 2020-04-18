@@ -1,0 +1,10 @@
+corona_details:
+  - prefecture_name: "saitama"
+    tested: 100
+    confirmed: 20
+    recovered: 3
+    active: 17
+    deaths: 0
+    critical: 2
+    created_at: "2020-01-31 14:00:00"
+    updated_at: "2020-04-05 12:00:00"
