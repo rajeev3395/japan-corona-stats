@@ -26,3 +26,16 @@ This project is to give the basic details like tested, confirmed, critical cases
    - [x] Add DBRider dependency
    - [x] Test stats controller after initializing the dataset
    - [x] Finally, check all tests are passed successfully
+
+## Plan for the logging
+### Scope
+    - Use kafka client to send the app log to a sever
+    - Create a kafka consumer to make sure log is on the server
+### Steps
+    - [x] Set Kafka docker
+    - [x] Create a local  topic to publish the message[for testing that consumer is working]
+    - [x] Open a consumer console to consume that message
+    - [x] Add the log4j2 and Kafka-client lib gradle file, remove logback dependency
+    - [x] Set the XML configuration with Kafka being  set as async
+    - [x] Run the test once and check it
+    - [x] Confirm that message is displayed on the consumer console

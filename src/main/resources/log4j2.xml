@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="DEBUG">
+
+    <Appenders>
+        <kafka name="kafkalog" topic="test">
+            <PatternLayout pattern="%date %message"/>
+            <Property name="bootstrap.servers">localhost:29092</Property>
+            <Property name="request.timeout.ms">4000</Property>
+        </kafka>
+
+        <Async name="AsyncKafka">
+            <AppenderRef ref="kafkalog"/>
+        </Async>
+
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout pattern="%date %message"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="DEBUG">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="AsyncKafka"/>
+        </Root>
+    </Loggers>
+
+</Configuration>
